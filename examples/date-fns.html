@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-    <title>Pikaday - moment.js example</title>
+    <title>Pikaday - date-fns example</title>
     <meta name="author" content="Ramiro Rikkert">
     <link rel="stylesheet" href="../css/pikaday.css">
     <link rel="stylesheet" href="../css/site.css">
@@ -11,7 +11,7 @@
 <body>
     <a href="https://github.com/Pikaday/Pikaday"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
 
-    <h1>Pikaday + moment.js</h1>
+    <h1>Pikaday + date-fns</h1>
 
     <p class="large">A refreshing JavaScript Datepicker — lightweight, no dependencies, modular CSS.</p>
 
@@ -28,25 +28,29 @@
     <p class="small">Copyright © 2014 <a href="https://dbushell.com/">David Bushell</a> | BSD &amp; MIT license | Example by <a href="https://github.com/rikkert">Ramiro Rikkert</a></p>
 
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.28.5/date_fns.min.js"></script>
     <script src="../pikaday.js"></script>
     <script>
 
-    // You can get and set dates with moment objects
-    var picker = new Pikaday(
+    // You can get and set dates with custom formatter (and thus also date-fns)
+    new Pikaday(
     {
         field: document.getElementById('datepicker'),
-        firstDay: 1,
-        minDate: new Date(2000, 0, 1),
-        maxDate: new Date(2020, 12, 31),
-        yearRange: [2000,2020],
-        onSelect: function() {
-            var date = document.createTextNode(this.getMoment().format('Do MMMM YYYY') + ' ');
-            document.getElementById('selected').appendChild(date);
+        toString: function(date, format) {
+            return dateFns.format(date, format);
+        },
+        parse: function(dateString, format) {
+            return dateFns.parse(dateString);
+        },
+        onSelect: function(selectedDate) {
+            // not necessary, just showing off
+            if (dateFns.isValid(selectedDate)) {
+                var p = document.createElement('p');
+                p.innerText = dateFns.distanceInWordsToNow(selectedDate, {addSuffix: true});
+                document.getElementById('selected').appendChild(p);
+            }
         }
     });
-
-    picker.setMoment(moment().dayOfYear(366));
 
     </script>
 </body>
